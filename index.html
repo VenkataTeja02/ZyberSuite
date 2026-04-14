@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob:; connect-src 'self' https://api.pwnedpasswords.com https://www.virustotal.com; worker-src 'self' blob:;">
+<title>ZyberSuite — Advanced Cybersecurity Toolkit</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{cx:{bg:'#0f0c29',panel:'#1a1535',card:'#1e1a3a',accent:'#a78bfa',cyan:'#67e8f9',danger:'#f87171',warn:'#fbbf24',purple:'#c084fc',pink:'#f472b6',green:'#34d399',text:'#f1f0ff',muted:'#a09cc0',border:'rgba(255,255,255,0.12)'}},fontFamily:{mono:['Space Mono','monospace'],display:['Outfit','sans-serif']}}}};</script>
+</head>
+<body>
+<canvas id="matrix-canvas"></canvas>
+<div class="scanline"></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<header class="mobile-header" style="display:none">
+  <button id="menuToggle"><i class="fas fa-bars"></i></button>
+  <h1>ZyberSuite</h1>
+  <button id="mobileThemeBtn" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:7px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--accent);cursor:pointer"><i class="fas fa-circle-half-stroke"></i></button>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div id="app" style="display:flex;min-height:100vh">
+  <aside class="sidebar" id="sidebar" role="navigation">
+    <div class="sidebar-logo">
+      <div class="logo-mark">CSX</div>
+      <div class="logo-text"><h1>ZyberSuite</h1></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Overview</div>
+      <div class="nav-item active" data-page="dashboard"><i class="fas fa-table-cells"></i> Dashboard</div>
+      <div class="nav-section">Encryption</div>
+      <div class="nav-item" data-page="stego"><i class="fas fa-image"></i> Steganography<span class="badge">LSB</span></div>
+      <div class="nav-item" data-page="emoji"><i class="fas fa-ghost"></i> Phantom Emoji<span class="badge">ZWC</span></div>
+      <div class="nav-item" data-page="crypto"><i class="fas fa-lock"></i> Crypto Toolkit</div>
+      <div class="nav-section">Network</div>
+      <div class="nav-item" data-page="wifi"><i class="fas fa-wifi"></i> WiFi Analyzer</div>
+      <div class="nav-item" data-page="packet"><i class="fas fa-ethernet"></i> Packet Analyzer</div>
+      <div class="nav-section">Intelligence</div>
+      <div class="nav-item" data-page="password"><i class="fas fa-shield-halved"></i> Password Checker<span class="badge">HIBP</span></div>
+      <div class="nav-item" data-page="pwgen"><i class="fas fa-wand-magic-sparkles"></i> Password Gen<span class="badge">NEW</span></div>
+      <div class="nav-item" data-page="malware"><i class="fas fa-bug"></i> Malware Scanner</div>
+      <div class="nav-item" data-page="url"><i class="fas fa-link"></i> URL Detector<span class="badge warn">VT</span></div>
+      <div class="nav-section">File Tools</div>
+      <div class="nav-item" data-page="loganalyzer"><i class="fas fa-scroll"></i> Log Analyzer<span class="badge purple">SIEM</span></div>
+      <div class="nav-item" data-page="metadata"><i class="fas fa-tags"></i> Metadata<span class="badge">EXIF</span></div>
+      <div class="nav-item" data-page="shredder"><i class="fas fa-trash-can"></i> Secure Shredder</div>
+      <div class="nav-section">Settings</div>
+      <div class="nav-item" data-page="apisetup"><i class="fas fa-key"></i> API Setup<span class="badge" id="vtKeyBadge" style="display:none">✓</span></div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="theme-toggle-btn" id="themeToggleBtn">
+        <i class="fas fa-moon" id="themeIcon"></i>
+        <span id="themeLabel">Light Mode</span>
+        <div class="toggle-track" id="themeTrack"></div>
+      </button>
+      <div class="social-links">
+        <a href="https://github.com/VenkataTeja02" target="_blank" rel="noopener noreferrer" class="social-link github" title="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://linkedin.com/in/venkatateja02" target="_blank" rel="noopener noreferrer" class="social-link linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+      <div style="display:flex;align-items:center;margin-bottom:3px">Made with 💜 by Tej</div>
+    </div>
+  </aside>
+
+  <main class="main-content" role="main">
+
+    <!-- DASHBOARD -->
+    <section id="page-dashboard" class="page active">
+      <div class="mb-8">
+        <h2 class="text-3xl font-extrabold mb-2 glow-text" style="color:var(--accent)">ZyberSuite</h2>
+        <p class="text-sm" style="color:var(--muted)" id="typingText"></p>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="glass stat-card"><div class="value">12</div><div class="label">Active Modules</div></div>
+        <div class="glass stat-card"><div class="value" id="statOps">0</div><div class="label">Operations</div></div>
+        <div class="glass stat-card"><div class="value" id="statBytes">0B</div><div class="label">Bytes Processed</div></div>
+        <div class="glass stat-card"><div class="value" id="statUptime">0s</div><div class="label">Uptime</div></div>
+      </div>
+      <h3 class="text-base font-bold mb-4" style="color:var(--text)">Module Overview</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+        <div class="glass tool-card" data-nav="stego"><div class="card-icon" style="background:rgba(0,255,136,0.1);color:var(--accent)"><i class="fas fa-image"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Steganography</h4><p class="text-xs" style="color:var(--muted)">Hide messages in images via LSB encoding</p></div>
+        <div class="glass tool-card" data-nav="emoji"><div class="card-icon" style="background:rgba(0,212,255,0.1);color:var(--cyan)"><i class="fas fa-ghost"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Phantom Emoji</h4><p class="text-xs" style="color:var(--muted)">Embed data into emojis via zero-width chars</p></div>
+        <div class="glass tool-card" data-nav="crypto"><div class="card-icon" style="background:rgba(255,170,0,0.1);color:var(--warn)"><i class="fas fa-lock"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Crypto Toolkit</h4><p class="text-xs" style="color:var(--muted)">25+ algorithms: AES, Playfair, Beaufort, JWT & more</p></div>
+        <div class="glass tool-card" data-nav="wifi"><div class="card-icon" style="background:rgba(255,51,102,0.1);color:var(--danger)"><i class="fas fa-wifi"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">WiFi Analyzer</h4><p class="text-xs" style="color:var(--muted)">Parse pcap files & WPA handshakes</p></div>
+        <div class="glass tool-card" data-nav="packet"><div class="card-icon" style="background:rgba(0,212,255,0.1);color:var(--cyan)"><i class="fas fa-ethernet"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Packet Analyzer</h4><p class="text-xs" style="color:var(--muted)">12 protocol filters, IP/port/flag analysis</p></div>
+        <div class="glass tool-card" data-nav="password"><div class="card-icon" style="background:rgba(0,255,136,0.1);color:var(--accent)"><i class="fas fa-shield-halved"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Password Checker</h4><p class="text-xs" style="color:var(--muted)">HIBP k-anonymity breach detection</p></div>
+        <div class="glass tool-card" data-nav="pwgen"><div class="card-icon" style="background:rgba(0,255,136,0.1);color:var(--accent)"><i class="fas fa-wand-magic-sparkles"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Password Generator</h4><p class="text-xs" style="color:var(--muted)">Keyword-based + HIBP breach-safe</p></div>
+        <div class="glass tool-card" data-nav="malware"><div class="card-icon" style="background:rgba(255,51,102,0.1);color:var(--danger)"><i class="fas fa-bug"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Malware Scanner</h4><p class="text-xs" style="color:var(--muted)">Entropy + PE/ELF + 36 YARA-like rules</p></div>
+        <div class="glass tool-card" data-nav="url"><div class="card-icon" style="background:rgba(168,85,247,0.1);color:var(--purple)"><i class="fas fa-link"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">URL Detector</h4><p class="text-xs" style="color:var(--muted)">VirusTotal API + heuristic analysis</p></div>
+        <div class="glass tool-card" data-nav="loganalyzer"><div class="card-icon" style="background:rgba(168,85,247,0.1);color:var(--purple)"><i class="fas fa-scroll"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Log Analyzer</h4><p class="text-xs" style="color:var(--muted)">Mini SIEM — detect brute force & anomalies</p></div>
+        <div class="glass tool-card" data-nav="metadata"><div class="card-icon" style="background:rgba(0,255,136,0.1);color:var(--accent)"><i class="fas fa-tags"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Metadata Extractor</h4><p class="text-xs" style="color:var(--muted)">Full EXIF data via ExifReader.js</p></div>
+        <div class="glass tool-card" data-nav="shredder"><div class="card-icon" style="background:rgba(255,51,102,0.1);color:var(--danger)"><i class="fas fa-trash-can"></i></div><h4 class="font-bold mb-1" style="color:var(--text);font-size:14px">Secure Shredder</h4><p class="text-xs" style="color:var(--muted)">DoD-grade overwrite + download cleared file</p></div>
+      </div>
+      <h3 class="text-base font-bold mb-3" style="color:var(--text)">Activity Log</h3>
+      <div class="glass" style="padding:14px"><div id="activityLog" style="max-height:180px;overflow-y:auto"><div class="log-item"><span class="time">--:--:--</span><span class="msg" style="color:#475569;font-size:11px">No activity yet.</span></div></div></div>
+    </section>
+
+    <!-- STEGANOGRAPHY -->
+    <section id="page-stego" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(0,255,136,0.1);color:var(--accent)"><i class="fas fa-image"></i></div><div><h2>Steganography</h2><p>Hide secret messages inside images using Least Significant Bit (LSB) encoding</p></div></div>
+      <div class="tabs mb-5" id="stegoTabs">
+        <button class="tab active" data-stego-tab="encode">Encode</button>
+        <button class="tab" data-stego-tab="decode">Decode</button>
+      </div>
+      <div id="stegoEncodeTab">
+        <div class="tool-grid">
+          <div>
+            <div class="field-row"><label>Upload Image</label><button class="clear-btn" id="clearStegoEncBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+            <div class="drop-zone" id="stegoEncDropZone"><i class="fas fa-cloud-arrow-up block"></i><p class="text-sm mb-1" style="color:var(--muted)">Drag & drop or click</p><p class="text-xs" style="color:var(--muted);opacity:.6">PNG/JPG · max 10MB</p><input type="file" accept="image/png,image/jpeg" id="stegoEncFile"></div>
+            <div id="stegoEncPreview" class="mt-3" style="display:none"><div class="preview-container"><img id="stegoEncImg" alt="Preview"></div><p class="text-xs mt-1" style="color:var(--muted)" id="stegoEncInfo"></p></div>
+            <div class="field-row mt-3"><label>Secret Message</label><button class="clear-btn" id="clearStegoMsgBtn"><i class="fas fa-eraser"></i></button></div>
+            <textarea class="input-field" id="stegoEncMsg" placeholder="Enter your secret message..." rows="5"></textarea>
+            <p class="text-xs mt-1" id="stegoCapacity" style="color:var(--muted)"></p>
+            <button class="btn btn-primary mt-3 w-full" id="stegoEncBtn" disabled><i class="fas fa-eye-slash"></i> Encode Message</button>
+          </div>
+          <div class="result-panel">
+            <div class="field-row"><label>Encoded Image</label></div>
+            <div id="stegoEncResult" class="glass-sm" style="flex:1;display:flex;align-items:center;justify-content:center"><p class="text-sm" style="color:var(--muted);opacity:.5">Encoded image will appear here</p></div>
+          </div>
+        </div>
+      </div>
+      <div id="stegoDecodeTab" style="display:none">
+        <div class="tool-grid">
+          <div>
+            <div class="field-row"><label>Upload Encoded Image (PNG only)</label><button class="clear-btn" id="clearStegoDecBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+            <div class="drop-zone" id="stegoDecDropZone"><i class="fas fa-cloud-arrow-up block"></i><p class="text-sm mb-1" style="color:var(--muted)">PNG format required</p><input type="file" accept="image/png" id="stegoDecFile"></div>
+            <div id="stegoDecPreview" class="mt-3" style="display:none"><div class="preview-container"><img id="stegoDecImg" alt="Preview"></div></div>
+            <button class="btn btn-primary mt-3 w-full" id="stegoDecBtn" disabled><i class="fas fa-eye"></i> Decode Message</button>
+          </div>
+          <div class="result-panel">
+            <div class="field-row"><label>Hidden Message</label></div>
+            <div id="stegoDecResult" class="glass-sm" style="flex:1;display:flex;align-items:center;justify-content:center"><p class="text-sm" style="color:var(--muted);opacity:.5">Decoded message will appear here</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHANTOM EMOJI -->
+    <section id="page-emoji" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(0,212,255,0.1);color:var(--cyan)"><i class="fas fa-ghost"></i></div><div><h2>Phantom Emoji Encoder</h2><p>Hide data inside emojis using zero-width characters, zlib compression, and optional AES</p></div></div>
+      <div class="tabs mb-5" id="emojiTabs">
+        <button class="tab active" data-emoji-tab="encode">Encode</button>
+        <button class="tab" data-emoji-tab="decode">Decode</button>
+      </div>
+      <div id="emojiEncodeTab">
+        <div class="tool-grid">
+          <div>
+            <div class="field-row"><label>Select Carrier Emojis</label><button class="clear-btn" id="clearEmojiEncBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+            <div class="glass-sm mb-3"><input class="input-field mb-2" placeholder="Search emojis..." id="emojiSearch"><div class="emoji-grid" id="emojiGrid"></div></div>
+            <div class="flex flex-wrap gap-1 mb-3 min-h-[28px]" id="selectedEmojis"><span class="text-xs" style="color:var(--muted)">No emojis selected</span></div>
+            <label class="block text-xs font-bold mb-1" style="color:var(--text)">Mode</label>
+            <select class="input-field mb-3" id="emojiMode"><option value="auto">Auto</option><option value="single">Single</option><option value="multi">Multi</option></select>
+            <div class="toggle-wrap mb-3" id="emojiAesToggle"><div class="toggle-track-lg"></div><span class="toggle-label">AES-256 Encryption</span></div>
+            <div id="emojiAesField" style="display:none" class="mb-3"><input class="input-field" type="password" placeholder="Encryption password" id="emojiPassword"></div>
+            <div class="field-row"><label>Secret Message</label><button class="clear-btn" id="clearEmojiMsgBtn"><i class="fas fa-eraser"></i></button></div>
+            <textarea class="input-field" id="emojiMsg" placeholder="Message to hide..." rows="4"></textarea>
+            <button class="btn btn-primary mt-3 w-full" id="emojiEncBtn"><i class="fas fa-ghost"></i> Encode into Emojis</button>
+          </div>
+          <div class="result-panel">
+            <div class="field-row"><label>Encoded Output</label></div>
+            <div id="emojiEncResult" class="glass-sm" style="flex:1;display:flex;align-items:center;justify-content:center"><p class="text-sm" style="color:var(--muted);opacity:.5">Encoded emojis will appear here</p></div>
+          </div>
+        </div>
+      </div>
+      <div id="emojiDecodeTab" style="display:none">
+        <div class="tool-grid">
+          <div>
+            <div class="field-row"><label>Paste Encoded Emojis</label><button class="clear-btn" id="clearEmojiDecBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+            <textarea class="input-field" id="emojiDecInput" placeholder="Paste encoded emoji string here..." rows="6"></textarea>
+            <div class="toggle-wrap mb-3 mt-3" id="emojiDecAesToggle"><div class="toggle-track-lg"></div><span class="toggle-label">AES-256 Decryption</span></div>
+            <div id="emojiDecAesField" style="display:none" class="mb-3"><input class="input-field" type="password" placeholder="Decryption password" id="emojiDecPassword"></div>
+            <button class="btn btn-primary w-full" id="emojiDecBtn"><i class="fas fa-eye"></i> Decode Message</button>
+          </div>
+          <div class="result-panel">
+            <div class="field-row"><label>Decoded Message</label></div>
+            <div id="emojiDecResult" class="glass-sm" style="flex:1;display:flex;align-items:center;justify-content:center"><p class="text-sm" style="color:var(--muted);opacity:.5">Decoded message will appear here</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CRYPTO TOOLKIT -->
+    <section id="page-crypto" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(255,170,0,0.1);color:var(--warn)"><i class="fas fa-lock"></i></div><div><h2>Cryptography Toolkit</h2><p>25+ algorithms: AES, Playfair, Beaufort, Polybius, Columnar, Affine, Tap Code, Base85, JWT & more</p></div></div>
+      <div class="tabs mb-5" id="cryptoTabs">
+        <button class="tab active" data-crypto-tab="encrypt">Encrypt / Encode</button>
+        <button class="tab" data-crypto-tab="hash">Hash Generator</button>
+        <button class="tab" data-crypto-tab="rsa">RSA Keys</button>
+        <button class="tab" data-crypto-tab="jwt">JWT Decoder</button>
+      </div>
+      <div id="cryptoEncryptTab">
+        <div class="tool-grid">
+          <div>
+            <label class="block text-xs font-bold mb-1" style="color:var(--text)">Algorithm</label>
+            <select class="input-field mb-3" id="cryptoAlgo">
+              <optgroup label="— Encoding —">
+                <option value="base64">Base64</option><option value="base32">Base32</option><option value="base58">Base58</option><option value="base85">Base85 / ASCII85</option><option value="hex">Hexadecimal</option><option value="binary">Binary (ASCII)</option><option value="octal">Octal</option><option value="decimal">Decimal (ASCII codes)</option><option value="unicode">Unicode Escape (\uXXXX)</option><option value="url">URL Encode / Decode</option><option value="html">HTML Entity Encode</option><option value="reverse">Reverse Text</option>
+              </optgroup>
+              <optgroup label="— Classic Ciphers —">
+                <option value="caesar">Caesar Cipher</option><option value="rot13">ROT-13</option><option value="rot47">ROT-47</option><option value="rot18">ROT-18</option><option value="vigenere">Vigenère Cipher</option><option value="beaufort">Beaufort Cipher</option><option value="atbash">Atbash Cipher</option><option value="affine">Affine Cipher</option><option value="bacon">Bacon Cipher</option><option value="playfair">Playfair Cipher</option><option value="polybius">Polybius Square</option><option value="columnar">Columnar Transposition</option><option value="morse">Morse Code</option><option value="tap">Tap Code</option><option value="rail">Rail Fence Cipher</option>
+              </optgroup>
+              <optgroup label="— Modern Encryption —">
+                <option value="aes">AES-256 (CryptoJS)</option><option value="rc4">RC4 Stream Cipher</option><option value="xor">XOR with key</option>
+              </optgroup>
+            </select>
+            <div id="cryptoExtraFields"></div>
+            <div class="field-row"><label>Input</label><button class="clear-btn" id="clearCryptoBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+            <textarea class="input-field" id="cryptoInput" placeholder="Enter text to process..." rows="10"></textarea>
+            <div class="flex gap-2 mt-3">
+              <button class="btn btn-primary flex-1" id="cryptoEncBtn"><i class="fas fa-lock"></i> Encode / Encrypt</button>
+              <button class="btn btn-secondary flex-1" id="cryptoDecBtn"><i class="fas fa-unlock"></i> Decode / Decrypt</button>
+            </div>
+          </div>
+          <div class="result-panel">
+            <div class="field-row"><label>Output</label><button class="clear-btn" id="clearCryptoOutputBtn"><i class="fas fa-eraser"></i></button></div>
+            <div id="cryptoResult" class="result-box" style="flex:1;min-height:400px"><span style="color:var(--muted)">Output will appear here...</span></div>
+          </div>
+        </div>
+      </div>
+      <div id="cryptoHashTab" style="display:none">
+        <div class="tool-grid">
+          <div>
+            <div class="field-row"><label>Input Text</label><button class="clear-btn" id="clearHashInputBtn"><i class="fas fa-eraser"></i></button></div>
+            <textarea class="input-field mb-3" id="hashInput" placeholder="Enter text to hash..." rows="7"></textarea>
+            <button class="btn btn-primary w-full" id="hashBtn"><i class="fas fa-hashtag"></i> Generate All Hashes</button>
+          </div>
+          <div class="result-panel">
+            <div class="field-row"><label>Hash Results</label><button class="clear-btn" id="clearHashResultBtn"><i class="fas fa-eraser"></i></button></div>
+            <div id="hashResult" class="glass-sm" style="flex:1;min-height:400px;display:flex;align-items:center;justify-content:center"><p style="color:var(--muted);opacity:.5;font-size:13px">Hash results will appear here</p></div>
+          </div>
+        </div>
+      </div>
+      <div id="cryptoRsaTab" style="display:none">
+        <div class="tool-grid">
+          <div>
+            <label class="block text-xs font-bold mb-1" style="color:var(--text)">Key Size</label>
+            <select class="input-field mb-3" id="rsaKeySize"><option value="2048" selected>2048-bit (recommended)</option><option value="4096">4096-bit (strong)</option></select>
+            <button class="btn btn-primary w-full mb-4" id="rsaGenBtn"><i class="fas fa-key"></i> Generate Real RSA Key Pair</button>
+            <div class="field-row mt-2"><label>Text to Sign / Verify</label><button class="clear-btn" id="clearRsaInputBtn"><i class="fas fa-eraser"></i></button></div>
+            <textarea class="input-field mb-3" id="rsaInput" placeholder="Enter text for RSA sign/verify..." rows="6"></textarea>
+            <div class="flex gap-2">
+              <button class="btn btn-secondary flex-1" id="rsaSignBtn" disabled><i class="fas fa-signature"></i> Sign (PSS)</button>
+              <button class="btn btn-purple flex-1" id="rsaVerifyBtn" disabled><i class="fas fa-check-circle"></i> Verify Sig</button>
+            </div>
+          </div>
+          <div class="result-panel">
+            <div class="field-row"><label>RSA Output</label><button class="clear-btn" id="clearRsaResultBtn"><i class="fas fa-eraser"></i></button></div>
+            <div id="rsaResult" class="glass-sm" style="flex:1;min-height:400px;display:flex;align-items:center;justify-content:center"><p style="color:var(--muted);opacity:.5;font-size:13px">Generate RSA key pair to begin</p></div>
+          </div>
+        </div>
+      </div>
+      <div id="cryptoJwtTab" style="display:none">
+        <div class="tool-grid">
+          <div>
+            <div class="field-row"><label>JWT Token</label><button class="clear-btn" id="clearJwtInputBtn"><i class="fas fa-eraser"></i></button></div>
+            <textarea class="input-field mb-3" id="jwtInput" placeholder="Paste JWT token here (eyJ...)" rows="6"></textarea>
+            <div class="mb-3">
+              <label class="block text-xs font-bold mb-1" style="color:var(--text)">Secret (optional — for signature verify)</label>
+              <input class="input-field" type="password" id="jwtSecret" placeholder="HMAC secret key (optional)">
+            </div>
+            <button class="btn btn-primary w-full" id="jwtDecodeBtn"><i class="fas fa-code"></i> Decode JWT</button>
+          </div>
+          <div class="result-panel">
+            <div class="field-row"><label>JWT Decoded</label><button class="clear-btn" id="clearJwtResultBtn"><i class="fas fa-eraser"></i></button></div>
+            <div id="jwtResult" class="glass-sm" style="flex:1;min-height:400px;display:flex;align-items:center;justify-content:center"><p style="color:var(--muted);opacity:.5;font-size:13px">Paste a JWT token to decode</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WIFI ANALYZER -->
+    <section id="page-wifi" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(255,51,102,0.1);color:var(--danger)"><i class="fas fa-wifi"></i></div><div><h2>WiFi Handshake Analyzer</h2><p>Parse pcap files to extract network info and validate WPA/WPA2 handshakes</p></div></div>
+      <div class="disclaimer mb-5"><i class="fas fa-triangle-exclamation"></i><span>Educational and authorized security testing only. Unauthorized network interception is illegal.</span></div>
+      <div class="tool-grid">
+        <div>
+          <div class="field-row"><label>Upload Capture File</label><button class="clear-btn" id="clearWifiBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+          <div class="drop-zone" id="wifiDropZone"><i class="fas fa-file-import block"></i><p class="text-sm mb-1" style="color:var(--muted)">Drag & drop or click</p><p class="text-xs" style="color:var(--muted);opacity:.6">.pcap / .cap · max 50MB</p><input type="file" accept=".pcap,.cap" id="wifiFile"></div>
+          <div class="flex gap-2 mt-3">
+            <button class="btn btn-primary flex-1" id="wifiAnalyzeBtn" disabled><i class="fas fa-magnifying-glass"></i> Analyze</button>
+            <button class="btn btn-secondary" id="wifiDemoBtn"><i class="fas fa-play"></i> Demo</button>
+          </div>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label>Analysis Results</label></div>
+          <div id="wifiResult" class="glass-sm" style="flex:1;min-height:400px"><p class="text-sm" style="color:var(--muted);opacity:.5;padding:80px 0;text-align:center">Upload a pcap file or run demo</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PACKET ANALYZER -->
+    <section id="page-packet" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(0,212,255,0.1);color:var(--cyan)"><i class="fas fa-ethernet"></i></div><div><h2>Packet Analyzer</h2><p>Deep packet inspection with 12 protocol filters, port range, IP range, TCP flag filter, payload search & CSV export</p></div></div>
+      <div class="tool-grid">
+        <div>
+          <div class="field-row"><label>Upload Capture File</label><button class="clear-btn" id="clearPacketBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+          <div class="drop-zone" id="packetDropZone"><i class="fas fa-file-import block"></i><p class="text-sm mb-1" style="color:var(--muted)">Drop .pcap / .cap file here</p><input type="file" accept=".pcap,.cap" id="packetFile"></div>
+          <div class="mt-3">
+            <label class="block text-xs font-bold mb-2" style="color:var(--text)">Protocol Filter</label>
+            <div class="filter-pills" id="protoPills">
+              <div class="filter-pill active" data-proto="all">ALL</div>
+              <div class="filter-pill" data-proto="tcp">TCP</div><div class="filter-pill" data-proto="udp">UDP</div><div class="filter-pill" data-proto="icmp">ICMP</div><div class="filter-pill" data-proto="http">HTTP</div><div class="filter-pill" data-proto="https">HTTPS</div><div class="filter-pill" data-proto="dns">DNS</div><div class="filter-pill" data-proto="tls">TLS</div><div class="filter-pill" data-proto="arp">ARP</div><div class="filter-pill" data-proto="ftp">FTP</div><div class="filter-pill" data-proto="smtp">SMTP</div><div class="filter-pill" data-proto="ssh">SSH</div>
+            </div>
+            <label class="block text-xs font-bold mb-2 mt-3" style="color:var(--text)">TCP Flags</label>
+            <div class="filter-pills" id="flagPills">
+              <div class="filter-pill active" data-flag="any">ANY</div>
+              <div class="filter-pill" data-flag="SYN">SYN</div><div class="filter-pill" data-flag="ACK">ACK</div><div class="filter-pill" data-flag="FIN">FIN</div><div class="filter-pill" data-flag="RST">RST</div><div class="filter-pill" data-flag="PSH">PSH</div><div class="filter-pill" data-flag="URG">URG</div><div class="filter-pill" data-flag="SYN+ACK">SYN+ACK</div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mt-3">
+              <div><label class="block text-xs font-bold mb-1" style="color:var(--text)">Src IP Filter</label><input class="input-field" id="filterSrcIP" placeholder="e.g. 192.168.1"></div>
+              <div><label class="block text-xs font-bold mb-1" style="color:var(--text)">Dst IP Filter</label><input class="input-field" id="filterDstIP" placeholder="e.g. 10.0.0"></div>
+              <div><label class="block text-xs font-bold mb-1" style="color:var(--text)">Port Range</label><input class="input-field" id="filterPort" placeholder="e.g. 80, 443, 1000-2000"></div>
+              <div><label class="block text-xs font-bold mb-1" style="color:var(--text)">Min Pkt Size</label><input class="input-field" id="filterMinSize" type="number" placeholder="bytes"></div>
+            </div>
+            <div class="mt-2"><label class="block text-xs font-bold mb-1" style="color:var(--text)">Payload Search</label><input class="input-field mb-3" id="packetSearch" placeholder="Search text, hex (0x...), IP, or port..."></div>
+            <div class="toggle-wrap mb-3" id="packetStatsToggle"><div class="toggle-track-lg"></div><span class="toggle-label">Show Statistics Panel</span></div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-primary flex-1" id="packetAnalyzeBtn" disabled><i class="fas fa-magnifying-glass"></i> Analyze</button>
+            <button class="btn btn-secondary" id="packetDemoBtn"><i class="fas fa-play"></i> Demo</button>
+            <button class="btn btn-secondary btn-sm" id="packetExportBtn" disabled title="Export as CSV"><i class="fas fa-download"></i></button>
+          </div>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label id="packetResultLabel">Packet Table</label><button class="clear-btn" id="clearPacketResultBtn"><i class="fas fa-eraser"></i></button></div>
+          <div id="packetStatsPanel" style="display:none" class="glass-sm mb-3"></div>
+          <div id="packetResult" class="glass-sm" style="flex:1;overflow:auto;min-height:400px"><p class="text-sm" style="color:var(--muted);opacity:.5;padding:80px 0;text-align:center">Upload a pcap or run demo</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASSWORD CHECKER -->
+    <section id="page-password" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(0,212,255,0.1);color:var(--cyan)"><i class="fas fa-shield-halved"></i></div><div><h2>Password Breach Checker</h2><p>k-Anonymity HIBP API — your password never leaves your browser</p></div></div>
+      <div class="disclaimer mb-5"><i class="fas fa-shield-halved"></i><span>Only the first 5 chars of SHA-1 hash are sent to Have I Been Pwned via k-anonymity model.</span></div>
+      <div class="tool-grid">
+        <div class="glass" style="align-self:start;padding:26px">
+          <div class="field-row mb-2"><label>Enter Password</label><button class="clear-btn" id="clearPasswordBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+          <div class="relative mb-2" style="position:relative">
+            <input class="input-field" style="padding-right:40px" type="password" id="pwInput" placeholder="Type a password to check..." autocomplete="off">
+            <button id="pwVisToggle" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted)"><i class="fas fa-eye" id="pwVisIcon"></i></button>
+          </div>
+          <div class="strength-bar"><div class="strength-fill" id="pwStrengthBar"></div></div>
+          <p class="text-xs mt-1" style="color:var(--muted)" id="pwStrengthText"></p>
+          <div class="mt-5" style="border-top:1px solid var(--border);padding-top:16px"><p class="text-xs font-bold mb-2" style="color:var(--muted);text-transform:uppercase;letter-spacing:1px">Requirements</p><div id="pwChecklist" style="display:flex;flex-direction:column;gap:6px"></div></div>
+          <button class="btn btn-primary mt-5 w-full" id="pwCheckBtn"><i class="fas fa-search"></i> Check for Breaches</button>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label>Breach Report</label></div>
+          <div id="pwResult" class="glass-sm" style="flex:1;display:flex;align-items:center;justify-content:center;min-height:380px"><div style="text-align:center;color:var(--muted)"><i class="fas fa-shield-halved" style="font-size:42px;opacity:.15;margin-bottom:12px;display:block"></i><p class="text-xs" style="opacity:.5">Enter a password and click Check</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PASSWORD GENERATOR -->
+    <section id="page-pwgen" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(0,255,136,0.1);color:var(--accent)"><i class="fas fa-wand-magic-sparkles"></i></div><div><h2>Smart Password Generator</h2><p>Generate strong, breach-safe passwords from keywords — checks HIBP before confirming safety</p></div></div>
+      <div class="tool-grid">
+        <div>
+          <div class="glass mb-4" style="padding:20px">
+            <label class="block text-xs font-bold mb-2" style="color:var(--text)">Keywords</label>
+            <input class="input-field mb-2" id="pwgenKeywords" placeholder="e.g. dragon, mountain, coffee...">
+          </div>
+          <div class="glass mb-4" style="padding:20px">
+            <p class="text-xs font-bold mb-3" style="color:var(--muted);text-transform:uppercase;letter-spacing:1px">Options</p>
+            <div class="pwgen-option"><label>Password Length</label><div style="display:flex;align-items:center;gap:8px"><input type="range" min="12" max="64" value="20" id="pwgenLength" style="width:100px"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);min-width:24px" id="pwgenLenLabel">20</span></div></div>
+            <div class="pwgen-option"><label>Include Uppercase</label><div class="toggle-wrap active" id="pwgenUpperToggle"><div class="toggle-track-lg"></div></div></div>
+            <div class="pwgen-option"><label>Include Numbers</label><div class="toggle-wrap active" id="pwgenNumToggle"><div class="toggle-track-lg"></div></div></div>
+            <div class="pwgen-option"><label>Include Symbols</label><div class="toggle-wrap active" id="pwgenSymToggle"><div class="toggle-track-lg"></div></div></div>
+            <div class="pwgen-option"><label>Leetspeak Transform</label><div class="toggle-wrap active" id="pwgenLeetToggle"><div class="toggle-track-lg"></div></div></div>
+            <div class="pwgen-option"><label>Format</label><select class="input-field" id="pwgenFormat" style="width:160px"><option value="random">Random Mix</option><option value="keyword">Keyword Based</option><option value="passphrase">Passphrase</option><option value="pin">Numeric PIN</option></select></div>
+            <div class="pwgen-option"><label>Batch Count</label><select class="input-field" id="pwgenBatch" style="width:80px"><option value="1">1</option><option value="5" selected>5</option><option value="10">10</option></select></div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-primary flex-1" id="pwgenBtn"><i class="fas fa-wand-magic-sparkles"></i> Generate &amp; Verify</button>
+            <button class="btn btn-secondary" id="pwgenCopyAllBtn" disabled><i class="fas fa-copy"></i> Copy All</button>
+          </div>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label>Generated Passwords</label><button class="clear-btn" id="clearPwGenBtn"><i class="fas fa-eraser"></i></button></div>
+          <div id="pwgenResult" class="glass-sm" style="flex:1;min-height:420px;display:flex;align-items:center;justify-content:center"><div style="text-align:center;color:var(--muted)"><i class="fas fa-wand-magic-sparkles" style="font-size:42px;opacity:.15;margin-bottom:12px;display:block"></i><p class="text-xs" style="opacity:.5">Configure and click Generate</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MALWARE SCANNER — FIXED -->
+    <section id="page-malware" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(255,51,102,0.1);color:var(--danger)"><i class="fas fa-bug"></i></div><div><h2>File Malware Scanner</h2><p>Entropy analysis · PE/ELF header parsing · 36 YARA-like signature rules · Heuristic detection</p></div></div>
+      <div class="tool-grid">
+        <div>
+          <div class="field-row"><label>Upload File to Scan</label><button class="clear-btn" id="clearMalwareBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+          <div class="drop-zone" id="malwareDropZone"><i class="fas fa-file-shield block"></i><p class="text-sm mb-1" style="color:var(--muted)">Drop any file here to scan</p><p class="text-xs" style="color:var(--muted);opacity:.6">Max 20MB · All file types accepted</p><input type="file" id="malwareFile"></div>
+          <div id="malwareFileInfo" class="mt-3" style="display:none"></div>
+          <div class="mt-3">
+            <label class="block text-xs font-bold mb-1" style="color:var(--text)">Scan Mode</label>
+            <select class="input-field mb-3" id="malwareScanMode">
+              <option value="full">Full Scan (signatures + heuristics)</option>
+              <option value="quick">Quick Scan (signatures only)</option>
+              <option value="deep">Deep Scan (all patterns + API imports)</option>
+            </select>
+          </div>
+          <div class="glass-sm mb-3" style="font-size:11px;color:var(--muted)">
+            <p style="color:var(--accent);font-weight:700;margin-bottom:6px"><i class="fas fa-info-circle"></i> What gets scanned:</p>
+            <p>⚡ <strong style="color:var(--accent)">VirusTotal</strong> hash lookup — 70+ AV engines (requires API key)</p>
+            <p>✓ SHA-256 fingerprint (no file upload — hash only)</p>
+            <p>✓ Smart entropy (skips images &amp; archives)</p>
+            <p>✓ PE/ELF header parsing (executable type)</p>
+            <p>✓ 36 YARA-like signature rules</p>
+            <p>✓ Obfuscation, dropper &amp; credential patterns</p>
+          </div>
+          <button class="btn btn-primary w-full" id="malwareScanBtn" disabled><i class="fas fa-bug"></i> Scan File</button>
+          <div id="malwareVtKeyStatus" class="mt-3 glass-sm" style="font-size:10px;color:var(--muted)">
+            <i class="fas fa-circle-info"></i> No VirusTotal API key — <a href="#" class="nav-to-apisetup" style="color:var(--cyan)">set up in API Setup</a> to enable VT scanning
+          </div>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label>Scan Report</label></div>
+          <div id="malwareResult" class="glass-sm" style="flex:1;min-height:380px;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;color:var(--muted)">
+              <i class="fas fa-shield" style="font-size:40px;opacity:.15;margin-bottom:10px;display:block"></i>
+              <p class="text-xs" style="opacity:.5">Upload a file to scan</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- URL DETECTOR — VirusTotal -->
+    <section id="page-url" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(168,85,247,0.1);color:var(--purple)"><i class="fas fa-link"></i></div><div><h2>URL &amp; Phishing Detector</h2><p>VirusTotal API (70+ engines) + heuristic analysis — typosquatting, homographs, redirect detection</p></div></div>
+
+      <!-- API Key Status Banner -->
+      <div id="urlVtStatusBanner" class="glass-sm mb-5" style="border-color:rgba(168,85,247,0.2);font-size:11px;display:flex;align-items:center;gap:10px">
+        <i class="fas fa-key" style="color:var(--purple);font-size:14px"></i>
+        <span id="urlVtBannerText" style="flex:1;color:var(--muted)">No VirusTotal API key saved — <a href="#" class="nav-to-apisetup" style="color:var(--cyan)">set it up in API Setup</a></span>
+      </div>
+
+      <div class="tool-grid">
+        <div>
+          <div class="field-row"><label>Enter URL to Analyze</label><button class="clear-btn" id="clearURLBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+          <input class="input-field mb-3" id="urlInput" placeholder="https://example.com" type="url">
+
+          <p class="text-xs mb-2" style="color:var(--muted)">Quick examples:</p>
+          <div class="flex flex-wrap gap-2 mb-4" id="urlExamples">
+            <button class="btn btn-secondary btn-sm" data-url="http://paypa1.com/login">paypa1.com</button>
+            <button class="btn btn-secondary btn-sm" data-url="https://g00gle.security-check.xyz">g00gle fake</button>
+            <button class="btn btn-secondary btn-sm" data-url="https://amazon.com">amazon.com</button>
+            <button class="btn btn-secondary btn-sm" data-url="http://free-prize.ru/win?user=1">free-prize.ru</button>
+          </div>
+
+          <div class="tabs mb-4" id="urlModeTabs">
+            <button class="tab active" data-url-mode="both">VT + Heuristics</button>
+            <button class="tab" data-url-mode="vt">VirusTotal Only</button>
+            <button class="tab" data-url-mode="heuristic">Heuristics Only</button>
+          </div>
+
+          <button class="btn btn-primary w-full" id="urlAnalyzeBtn"><i class="fas fa-magnifying-glass"></i> Analyze URL</button>
+
+          <div class="glass-sm mt-4" style="font-size:11px;color:var(--muted)">
+            <p style="color:var(--purple);font-weight:700;margin-bottom:6px"><i class="fas fa-shield-halved"></i> VirusTotal checks:</p>
+            <p>✓ 70+ antivirus engines</p>
+            <p>✓ Phishing & malware databases</p>
+            <p>✓ URL reputation scoring</p>
+            <p>✓ Category classification</p>
+            <p style="margin-top:6px;color:var(--warn)"><i class="fas fa-triangle-exclamation"></i> Without API key: heuristic analysis only</p>
+          </div>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label>Analysis Report</label></div>
+          <div id="urlResult" class="glass-sm" style="flex:1;min-height:380px;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;color:var(--muted)">
+              <i class="fas fa-link" style="font-size:40px;opacity:.15;margin-bottom:10px;display:block"></i>
+              <p class="text-xs" style="opacity:.5">Enter a URL to analyze</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOG ANALYZER -->
+    <section id="page-loganalyzer" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(168,85,247,0.1);color:var(--purple)"><i class="fas fa-scroll"></i></div><div><h2>Log Analyzer — Mini SIEM</h2><p>Detect brute force attacks, suspicious IPs, and failed logins from syslog / auth.log files</p></div></div>
+      <div class="tool-grid">
+        <div>
+          <div class="field-row"><label>Upload or Paste Log File</label><button class="clear-btn" id="clearLogBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+          <div class="drop-zone mb-3" id="logDropZone"><i class="fas fa-file-lines block"></i><p class="text-sm mb-1" style="color:var(--muted)">Drop log file or paste below</p><input type="file" accept=".log,.txt" id="logFile"></div>
+          <textarea class="input-field mb-3" id="logPasteArea" placeholder="Or paste log content here (syslog, auth.log, access.log)..." rows="7"></textarea>
+          <div class="flex gap-2"><button class="btn btn-primary flex-1" id="logAnalyzeBtn"><i class="fas fa-magnifying-glass"></i> Analyze Logs</button><button class="btn btn-secondary" id="logDemoBtn"><i class="fas fa-play"></i> Demo</button></div>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label>SIEM Report</label></div>
+          <div id="logResult" class="glass-sm" style="flex:1;min-height:420px;display:flex;align-items:center;justify-content:center"><div style="text-align:center;color:var(--muted)"><i class="fas fa-scroll" style="font-size:40px;opacity:.15;margin-bottom:10px;display:block"></i><p class="text-xs" style="opacity:.5">Upload or paste log data</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METADATA EXTRACTOR -->
+    <section id="page-metadata" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(0,255,136,0.1);color:var(--accent)"><i class="fas fa-tags"></i></div><div><h2>File Metadata Extractor</h2><p>Full EXIF extraction via ExifReader.js — GPS, camera model, lens, timestamps, color space &amp; more</p></div></div>
+      <div class="tool-grid">
+        <div>
+          <div class="field-row"><label>Upload Image File</label><button class="clear-btn" id="clearMetadataBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+          <div class="drop-zone" id="metaDropZone"><i class="fas fa-image block"></i><p class="text-sm mb-1" style="color:var(--muted)">Drop image or click to browse</p><p class="text-xs" style="color:var(--muted);opacity:.6">JPEG/PNG/TIFF/HEIC — Full EXIF support</p><input type="file" accept="image/*" id="metaFile"></div>
+          <div id="metaPreview" style="display:none" class="mt-3"><div class="preview-container"><img id="metaImg" alt="Preview"></div></div>
+          <div id="metaFileInfo" class="mt-3" style="display:none"></div>
+          <button class="btn btn-primary w-full mt-3" id="metaExtractBtn" disabled><i class="fas fa-tags"></i> Extract Full EXIF Data</button>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label>EXIF Report</label><button class="clear-btn" id="clearMetadataResultBtn"><i class="fas fa-eraser"></i></button></div>
+          <div id="metaResult" class="glass-sm" style="flex:1;min-height:380px;overflow-y:auto"><div style="text-align:center;color:var(--muted);padding:60px 0"><i class="fas fa-tags" style="font-size:40px;opacity:.15;margin-bottom:10px;display:block"></i><p class="text-xs" style="opacity:.5">Upload an image to extract metadata</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECURE SHREDDER -->
+    <section id="page-shredder" class="page">
+      <div class="section-header"><div class="icon-box" style="background:rgba(255,51,102,0.1);color:var(--danger)"><i class="fas fa-trash-can"></i></div><div><h2>Secure File Shredder</h2><p>DoD 5220.22-M multi-pass overwrite — produces a real overwritten file for download</p></div></div>
+      <div class="disclaimer mb-5" style="border-color:rgba(0,212,255,0.2);background:rgba(0,212,255,0.04)"><i class="fas fa-circle-info" style="color:var(--cyan)"></i><span style="color:var(--cyan)"><strong>Real browser-level shredding:</strong> File content is overwritten in-memory using Web Crypto API random data, then downloaded.</span></div>
+      <div class="tool-grid">
+        <div>
+          <div class="field-row"><label>File to Shred</label><button class="clear-btn" id="clearShredBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
+          <div class="drop-zone" id="shredDropZone"><i class="fas fa-trash-can block"></i><p class="text-sm mb-1" style="color:var(--muted)">Drop file to shred</p><input type="file" id="shredFile"></div>
+          <div id="shredFileInfo" class="mt-3" style="display:none"></div>
+          <label class="block text-xs font-bold mb-1 mt-3" style="color:var(--text)">Overwrite Standard</label>
+          <select class="input-field mb-3" id="shredStandard"><option value="dod3">DoD 5220.22-M (3 passes)</option><option value="dod7">DoD 5220.22-M ECE (7 passes)</option><option value="gutmann">Gutmann Method (35 passes)</option><option value="random">Random Data (1 pass)</option><option value="zeros">Zero Fill (1 pass)</option></select>
+          <label class="block text-xs font-bold mb-1" style="color:var(--text)">Download As</label>
+          <select class="input-field mb-3" id="shredOutputFormat"><option value="same">Same filename + .shredded</option><option value="bin">Random hex filename .bin</option><option value="txt">Overwrite report .txt</option></select>
+          <button class="btn btn-danger w-full" id="shredBtn" disabled><i class="fas fa-fire"></i> Shred &amp; Download</button>
+        </div>
+        <div class="result-panel">
+          <div class="field-row"><label>Shredding Progress &amp; Log</label></div>
+          <div id="shredResult" class="glass-sm" style="flex:1;min-height:380px;display:flex;align-items:center;justify-content:center"><div style="text-align:center;color:var(--muted)"><i class="fas fa-trash-can" style="font-size:40px;opacity:.15;margin-bottom:10px;display:block"></i><p class="text-xs" style="opacity:.5">Upload a file to shred</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API SETUP -->
+    <section id="page-apisetup" class="page">
+      <div class="section-header">
+        <div class="icon-box" style="background:rgba(168,85,247,0.1);color:var(--purple)"><i class="fas fa-key"></i></div>
+        <div><h2>API Setup</h2><p>Configure your VirusTotal API key — used by Malware Scanner and URL Detector</p></div>
+      </div>
+
+      <div class="disclaimer mb-5" style="border-color:rgba(255,170,0,0.25);background:rgba(255,170,0,0.04)">
+        <i class="fas fa-triangle-exclamation" style="color:var(--warn)"></i>
+        <span style="color:var(--warn)"><strong>Browser limitation:</strong> Your API key is stored in <code>localStorage</code> and sent directly from your browser to VirusTotal. It is readable via DevTools → Application → Local Storage and visible in the Network tab. <strong>Do not use a paid or high-quota key in shared or public environments.</strong> For production, route requests through a backend proxy that holds the key server-side.</span>
+      </div>
+
+      <div class="tool-grid">
+        <!-- LEFT: API Key -->
+        <div>
+          <div class="glass mb-5" style="border-color:rgba(168,85,247,0.2);padding:24px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+              <i class="fas fa-virus-slash" style="color:var(--purple);font-size:20px"></i>
+              <div>
+                <p style="font-weight:800;font-size:15px;color:var(--text)">VirusTotal API Key</p>
+                <p style="font-size:10px;color:var(--muted)">70+ antivirus engines · Free tier supported</p>
+              </div>
+              <span id="vtGlobalBadge" style="margin-left:auto;font-size:9px;padding:3px 9px;border-radius:4px;background:rgba(100,116,139,0.15);color:var(--muted);border:1px solid var(--border);font-family:'JetBrains Mono',monospace">NOT SET</span>
+            </div>
+
+            <div class="field-row"><label>API Key</label></div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;position:relative">
+              <input class="input-field flex-1" type="password" id="apiSetupVtKey" placeholder="Paste your VirusTotal API key here..." style="padding-right:42px">
+              <button id="apiSetupEyeBtn" style="position:absolute;right:92px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:4px;transition:color .2s" title="Show/hide"><i class="fas fa-eye"></i></button>
+              <button class="btn btn-purple btn-sm" id="apiSetupSaveBtn"><i class="fas fa-save"></i> Save</button>
+            </div>
+            <div id="apiSetupStatus" style="font-size:10px;color:var(--muted);margin-bottom:18px;font-family:'JetBrains Mono',monospace;padding:9px 12px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg)">
+              <i class="fas fa-circle-info"></i> No key saved — get a free key at <a href="https://www.virustotal.com/gui/join-us" target="_blank" style="color:var(--cyan)">virustotal.com</a>
+            </div>
+            <button class="btn btn-danger btn-sm" id="apiSetupClearBtn"><i class="fas fa-trash-can"></i> Remove Saved Key</button>
+          </div>
+
+        <!-- FEATURE 2: Step-by-step instructions inside app -->
+          <div class="glass-sm mb-4" style="font-size:11px;color:var(--muted)">
+            <p style="color:var(--accent);font-weight:700;margin-bottom:12px;font-size:12px"><i class="fas fa-circle-play"></i> How to get your free API key</p>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+              <div style="display:flex;align-items:flex-start;gap:10px">
+                <span style="min-width:20px;height:20px;border-radius:50%;background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.4);color:var(--purple);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</span>
+                <div><p style="color:var(--text);font-weight:600;margin-bottom:2px">Create a free VirusTotal account</p>
+                <a href="https://www.virustotal.com/gui/join-us" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:10px"><i class="fas fa-external-link-alt"></i> Go to virustotal.com/gui/join-us</a></div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px">
+                <span style="min-width:20px;height:20px;border-radius:50%;background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.4);color:var(--purple);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</span>
+                <p style="color:var(--text);font-weight:600;padding-top:1px">Log in → click your avatar (top-right) → <span style="color:var(--cyan);font-family:'JetBrains Mono',monospace">API Key</span> tab → Copy</p>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px">
+                <span style="min-width:20px;height:20px;border-radius:50%;background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.4);color:var(--purple);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</span>
+                <p style="color:var(--text);font-weight:600;padding-top:1px">Paste the key in the field above → click <strong style="color:var(--purple)">Save</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-sm" style="font-size:11px;color:var(--muted)">
+            <p style="color:var(--accent);font-weight:700;margin-bottom:10px"><i class="fas fa-shield-halved"></i> What the VT key unlocks:</p>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:center;gap:8px"><i class="fas fa-bug" style="color:var(--danger);width:14px"></i><span><strong style="color:var(--text)">Malware Scanner</strong> — SHA-256 hash lookup across 70+ AV engines</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><i class="fas fa-link" style="color:var(--purple);width:14px"></i><span><strong style="color:var(--text)">URL Detector</strong> — 70+ engine real-time URL analysis</span></div>
+              <div style="display:flex;align-items:center;gap:8px"><i class="fas fa-circle-xmark" style="color:var(--muted);width:14px"></i><span style="color:var(--muted)">Without key: heuristic-only scanning (no VT cloud lookup)</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- end left column -->
+
+        <!-- RIGHT: Privacy + Stored data -->
+        <div class="result-panel">
+          <div class="field-row"><label>Storage &amp; Privacy</label></div>
+          <div class="glass-sm" style="flex:1">
+            <p style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:12px"><i class="fas fa-lock"></i> Your data is yours</p>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:flex-start;gap:10px;font-size:11px">
+                <i class="fas fa-check-circle" style="color:var(--accent);margin-top:1px;flex-shrink:0"></i>
+                <p style="color:var(--muted)"><strong style="color:var(--text)">API key</strong> stored only in your browser's localStorage — never sent to any server except VirusTotal.</p>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px;font-size:11px">
+                <i class="fas fa-check-circle" style="color:var(--accent);margin-top:1px;flex-shrink:0"></i>
+                <p style="color:var(--muted)"><strong style="color:var(--text)">File content</strong> never leaves your browser during local analysis (entropy, YARA, PE parsing).</p>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px;font-size:11px">
+                <i class="fas fa-check-circle" style="color:var(--accent);margin-top:1px;flex-shrink:0"></i>
+                <p style="color:var(--muted)"><strong style="color:var(--text)">File hash</strong> sent to VirusTotal only when you explicitly click Scan with VT key active.</p>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px;font-size:11px">
+                <i class="fas fa-check-circle" style="color:var(--accent);margin-top:1px;flex-shrink:0"></i>
+                <p style="color:var(--muted)"><strong style="color:var(--text)">HIBP password checks</strong> use k-anonymity — only the first 5 chars of a SHA-1 hash are sent.</p>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:10px;font-size:11px">
+                <i class="fas fa-check-circle" style="color:var(--accent);margin-top:1px;flex-shrink:0"></i>
+                <p style="color:var(--muted)">No analytics, no ads, no third-party tracking.</p>
+              </div>
+            </div>
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+              <p style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Stored Data</p>
+              <div id="apiSetupStoredData" style="font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;display:flex;flex-direction:column;gap:4px"></div>
+              <button id="clearAllApiDataBtn" class="btn btn-danger btn-sm" style="margin-top:14px;width:100%;justify-content:center"><i class="fas fa-trash-can"></i> Clear All Stored Data</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exifreader@4.14.1/dist/exif-reader.min.js"></script>
+<script src="script.js" defer></script>
+</body>
+</html>
