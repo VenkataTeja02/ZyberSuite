@@ -21,7 +21,7 @@
 
 ## Overview
 
-ZyberSuite is a dark-themed, single-page cybersecurity web application that runs entirely in your browser. It consolidates 12 security tools — spanning steganography, cryptography, network packet analysis, malware scanning, and more — into a unified, responsive interface.
+ZyberSuite is a cybersecurity web application that runs entirely in your browser. It consolidates 12 security tools — spanning steganography, cryptography, network packet analysis, malware scanning, and more — into a unified, responsive interface.
 
 No data ever touches a server (except optional VirusTotal API calls you explicitly trigger). Everything runs locally.
 
