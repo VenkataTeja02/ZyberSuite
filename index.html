@@ -445,14 +445,6 @@
           <div class="field-row"><label>Enter URL to Analyze</label><button class="clear-btn" id="clearURLBtn"><i class="fas fa-trash-can"></i> Clear</button></div>
           <input class="input-field mb-3" id="urlInput" placeholder="https://example.com" type="url">
 
-          <p class="text-xs mb-2" style="color:var(--muted)">Quick examples:</p>
-          <div class="flex flex-wrap gap-2 mb-4" id="urlExamples">
-            <button class="btn btn-secondary btn-sm" data-url="http://paypa1.com/login">paypa1.com</button>
-            <button class="btn btn-secondary btn-sm" data-url="https://g00gle.security-check.xyz">g00gle fake</button>
-            <button class="btn btn-secondary btn-sm" data-url="https://amazon.com">amazon.com</button>
-            <button class="btn btn-secondary btn-sm" data-url="http://free-prize.ru/win?user=1">free-prize.ru</button>
-          </div>
-
           <div class="tabs mb-4" id="urlModeTabs">
             <button class="tab active" data-url-mode="both">VT + Heuristics</button>
             <button class="tab" data-url-mode="vt">VirusTotal Only</button>
@@ -650,5 +642,173 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/exifreader@4.14.1/dist/exif-reader.min.js"></script>
 <script src="script.js" defer></script>
+<script>
+/* ── Custom Glassmorphism Select — body-portal edition ── */
+(function() {
+  // Single shared dropdown panel, appended to body
+  let activeWrapper = null;
+  let activeDropdown = null;
+
+  const panel = document.createElement('div');
+  panel.className = 'cx-select-dropdown';
+  document.body.appendChild(panel);
+
+  function positionPanel(trigger) {
+    const r = trigger.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - r.bottom;
+    const spaceAbove = r.top;
+    const panelH = Math.min(320, panel.scrollHeight);
+
+    panel.style.width = r.width + 'px';
+    panel.style.left = r.left + 'px';
+
+    if (spaceBelow >= panelH || spaceBelow >= spaceAbove) {
+      // open downward
+      panel.style.top = (r.bottom + 6) + 'px';
+      panel.style.bottom = 'auto';
+    } else {
+      // open upward
+      panel.style.bottom = (window.innerHeight - r.top + 6) + 'px';
+      panel.style.top = 'auto';
+    }
+  }
+
+  function openFor(wrapper) {
+    if (activeWrapper && activeWrapper !== wrapper) closePanel();
+    activeWrapper = wrapper;
+
+    // Populate panel with this select's options
+    const nativeSelect = wrapper._nativeSelect;
+    panel.innerHTML = '';
+    [...nativeSelect.children].forEach(child => {
+      if (child.tagName === 'OPTGROUP') {
+        const lbl = document.createElement('div');
+        lbl.className = 'cx-optgroup-label';
+        lbl.textContent = child.getAttribute('label');
+        panel.appendChild(lbl);
+        [...child.children].forEach(opt => panel.appendChild(makeOption(opt, nativeSelect)));
+      } else if (child.tagName === 'OPTION') {
+        panel.appendChild(makeOption(child, nativeSelect));
+      }
+    });
+
+    positionPanel(wrapper._trigger);
+    requestAnimationFrame(() => panel.classList.add('cx-open'));
+    wrapper.classList.add('open');
+  }
+
+  function makeOption(opt, nativeSelect) {
+    const item = document.createElement('div');
+    item.className = 'cx-option' + (opt.value === nativeSelect.value ? ' selected' : '');
+    item.textContent = opt.textContent.trim();
+    item.dataset.value = opt.value;
+    item.addEventListener('mousedown', e => {
+      e.preventDefault(); // prevent blur before click registers
+      selectValue(nativeSelect, opt.value);
+      closePanel();
+    });
+    return item;
+  }
+
+  function selectValue(nativeSelect, val) {
+    nativeSelect.value = val;
+    nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    // Update trigger label
+    const wrapper = nativeSelect._cxWrapper;
+    if (wrapper) {
+      const label = [...nativeSelect.options].find(o => o.value === val);
+      if (label) wrapper._triggerLabel.textContent = label.textContent.trim();
+    }
+  }
+
+  function closePanel() {
+    panel.classList.remove('cx-open');
+    if (activeWrapper) {
+      activeWrapper.classList.remove('open');
+      activeWrapper = null;
+    }
+  }
+
+  // Close on outside click/scroll/resize
+  document.addEventListener('mousedown', e => {
+    if (!panel.contains(e.target) && activeWrapper && !activeWrapper.contains(e.target)) {
+      closePanel();
+    }
+  });
+  window.addEventListener('scroll', () => { if (activeWrapper) positionPanel(activeWrapper._trigger); }, true);
+  window.addEventListener('resize', () => { if (activeWrapper) positionPanel(activeWrapper._trigger); });
+
+  function buildCustomSelect(nativeSelect) {
+    if (nativeSelect.dataset.cxReplaced) return;
+    nativeSelect.dataset.cxReplaced = '1';
+
+    const mb = [...nativeSelect.classList].find(c => c.startsWith('mb-'));
+    const inlineStyle = nativeSelect.getAttribute('style') || '';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'cx-select-wrapper' + (mb ? ' ' + mb : '');
+    if (inlineStyle) wrapper.setAttribute('style', inlineStyle);
+    wrapper._nativeSelect = nativeSelect;
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'cx-select-trigger';
+    wrapper._trigger = trigger;
+
+    const triggerLabel = document.createElement('span');
+    triggerLabel.className = 'cx-trigger-label';
+    wrapper._triggerLabel = triggerLabel;
+    trigger.appendChild(triggerLabel);
+
+    const arrow = document.createElement('span');
+    arrow.className = 'cx-arrow';
+    arrow.innerHTML = '<svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><path d="M8 11L3 6h10z"/></svg>';
+    trigger.appendChild(arrow);
+
+    // Set initial label
+    const selectedOpt = nativeSelect.options[nativeSelect.selectedIndex];
+    triggerLabel.textContent = selectedOpt ? selectedOpt.textContent.trim() : '';
+
+    trigger.addEventListener('click', e => {
+      e.stopPropagation();
+      activeWrapper === wrapper ? closePanel() : openFor(wrapper);
+    });
+
+    trigger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activeWrapper === wrapper ? closePanel() : openFor(wrapper); }
+      if (e.key === 'Escape') closePanel();
+    });
+
+    wrapper.appendChild(trigger);
+    nativeSelect.style.display = 'none';
+    nativeSelect.parentNode.insertBefore(wrapper, nativeSelect);
+    wrapper.appendChild(nativeSelect);
+
+    // Back-reference for programmatic updates
+    nativeSelect._cxWrapper = wrapper;
+
+    // Sync if JS changes native value externally
+    nativeSelect.addEventListener('change', () => {
+      const label = nativeSelect.options[nativeSelect.selectedIndex];
+      if (label) triggerLabel.textContent = label.textContent.trim();
+    });
+  }
+
+  function initAllSelects() {
+    document.querySelectorAll('select.input-field').forEach(buildCustomSelect);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAllSelects);
+  } else {
+    initAllSelects();
+  }
+
+  // Watch for dynamically added selects
+  new MutationObserver(() => {
+    document.querySelectorAll('select.input-field:not([data-cx-replaced])').forEach(buildCustomSelect);
+  }).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
 </body>
 </html>
