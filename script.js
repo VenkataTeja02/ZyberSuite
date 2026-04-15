@@ -1678,7 +1678,7 @@ $on('urlModeTabs', 'click', e => {
   urlMode = btn.dataset.urlMode;
 });
 
-document.getElementById('urlExamples').querySelectorAll('[data-url]').forEach(btn => {
+document.getElementById('urlExamples')?.querySelectorAll('[data-url]').forEach(btn => {
   btn.addEventListener('click', () => { document.getElementById('urlInput').value = btn.dataset.url; });
 });
 
